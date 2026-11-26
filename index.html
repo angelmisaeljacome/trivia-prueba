@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trivia AR - Vidas Flotantes</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@1.0.0/dist/aframe-look-at-component.min.js"></script>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+
+<body style="margin: 0; overflow: hidden;">
+
+    <div id="trivia-hud">
+        <h3 id="pregunta-titulo">Cargando pregunta...</h3>
+        <p id="pregunta-texto">Espere un momento...</p>
+        <p id="tiempo-pregunta" style="display:none;">Tiempo: 10s</p>
+        <p><small id="estado-texto">Escucha la pregunta...</small></p>
+        <button id="btn-reiniciar" style="display:none;" onclick="reiniciarJuego()">Reiniciar Juego</button>
+    </div>
+
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+
+        <a-marker preset="hiro">
+            <a-entity id="objeto-avatar" scale="0.07 0.07 0.07" position="0 0 0" rotation="0 90 0"></a-entity>
+            <a-text id="texto-vida-avatar" value="Caballero: 100%" position="0 1.2 0" align="center" color="#28a745" scale="1.5 1.5 1.5" look-at="[camera]"></a-text>
+        </a-marker>
+
+        <a-marker preset="kanji">
+            <a-entity id="objeto-enemigo-1" scale="0.07 0.07 0.07" position="0 0 0" rotation="0 -90 0"></a-entity>
+            <a-text id="texto-vida-e1" value="Enemigo: 100%" position="0 1.2 0" align="center" color="#dc3545" scale="1.5 1.5 1.5" look-at="[camera]"></a-text>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script src="static/juego.js"></script>
+    <script src="static/script.js"></script>
+</body>
+</html>

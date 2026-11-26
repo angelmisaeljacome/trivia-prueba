@@ -1,0 +1,51 @@
+#trivia-hud {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: sans-serif;
+    width: 320px;
+    text-align: center;
+    border-bottom: 4px solid #007AFF;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+#trivia-hud h3 { margin: 0 0 4px 0; font-size: 14px; color: #00d2ff; }
+#trivia-hud p { margin: 2px 0; font-size: 11px; }
+
+#btn-reiniciar {
+    margin-top: 8px;
+    width: 100%;
+    padding: 8px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* --- CORRECCIÓN DE ZOOM EN CÁMARA MÓVIL --- */
+body { margin: 0; overflow: hidden; width: 100vw; height: 100vh; height: 100dvh; }
+
+a-scene { width: 100% !important; height: 100% !important; position: absolute !important; top: 0; left: 0; }
+video {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    object-fit: cover !important;
+    z-index: 0;
+}
+
+@media screen and (max-width: 768px) {
+    #trivia-hud { top: 10px; width: 90%; max-width: 300px; padding: 8px 12px; }
+}
