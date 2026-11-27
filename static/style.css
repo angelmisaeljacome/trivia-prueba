@@ -1,21 +1,77 @@
+/**No permite que padding y border salgan del tamaño establecido de la pantalla*/
+* {
+    box-sizing: border-box;
+}
+
+/**
+* Contenedor raiz La ventana se extiende por toda la pantalla
+*/
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: #000000;
+}
+
+/* Escena AR y lienzo WebGL a pantalla completa */
+a-scene,
+a-scene .a-canvas {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    z-index: 1 !important;
+}
+
+/* Posiciona el video de AR.js por encima del fondo negro y debajo de la escena 3D */
+#arjs-video {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: cover !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 0 !important;
+}
+
+/* NOTA: las url() de este archivo son relativas a style.css (carpeta static/),
+   por eso es "img/fondo.jpg" y no "/static/img/fondo.jpg" */
 #trivia-hud {
     position: fixed;
     top: 15px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
-    background: rgba(0, 0, 0, 0.85);
+    background-image: url("img/fondo.jpg");
     color: white;
     padding: 10px 20px;
     border-radius: 10px;
     font-family: sans-serif;
     width: 320px;
     text-align: center;
-    border-bottom: 4px solid #007AFF;
+    border-bottom: 4px solid #ff8c00;
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-#trivia-hud h3 { margin: 0 0 4px 0; font-size: 14px; color: #00d2ff; }
+#trivia-hud h3 { margin: 0 0 4px 0; font-size: 14px; color: #ff8c00; }
 #trivia-hud p { margin: 2px 0; font-size: 11px; }
 
 #btn-reiniciar {
@@ -30,22 +86,216 @@
     cursor: pointer;
 }
 
-/* --- CORRECCIÓN DE ZOOM EN CÁMARA MÓVIL --- */
-body { margin: 0; overflow: hidden; width: 100vw; height: 100vh; height: 100dvh; }
-
-a-scene { width: 100% !important; height: 100% !important; position: absolute !important; top: 0; left: 0; }
-video {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    object-fit: cover !important;
-    z-index: 0;
-}
-
 @media screen and (max-width: 768px) {
     #trivia-hud { top: 10px; width: 90%; max-width: 300px; padding: 8px 12px; }
 }
+
+/* Tipografía Optimus Princeps (archivos en static/fonts/) */
+@font-face {
+    font-family: "Optimus Princeps";
+    src: url("fonts/OptimusPrinceps.woff2") format("woff2"),
+         url("fonts/OptimusPrinceps.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Variable CSS para cambiar la imagen de fondo de los paneles fácilmente */
+:root {
+    --fondo-panel-inicio: url("img/fondo.jpg");
+}
+
+/* Paneles tipo Inicio (Inicio y Jugar de nuevo) */
+.panel-inicio {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10001;
+    width: 82%;
+    max-width: 640px;
+    min-height: 320px;
+    padding: 36px 32px;
+    box-sizing: border-box;
+    border-radius: 16px;
+    background-image: var(--fondo-panel-inicio);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #161618;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+.titulo-inicio {
+    margin: 0;
+    font-family: "Optimus Princeps", "Cinzel", Georgia, serif;
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-shadow: 0 0 0.2em #ff8c00, 0 0 0.2em #000000, 3px -3px 6px rgba(255, 165, 0, 0.85);
+}
+
+/* Botones naranja con borde amarillo */
+.btn-inicio {
+    background-color: #f39c38;
+    color: #ffffff;
+    border: 2px solid #ffe600;
+    border-radius: 999px;
+    padding: 12px 34px;
+    min-width: 170px;
+    font-family: "Optimus Princeps", "Cinzel", Georgia, serif;
+    font-size: clamp(18px, 3vw, 26px);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn-inicio:hover {
+    filter: brightness(1.06);
+    transform: scale(1.02);
+}
+
+/* Paneles final tras ganar o perder */
+.panel-final {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10001;
+    width: 82%;
+    max-width: 640px;
+    min-height: 320px;
+    padding: 36px 32px;
+    box-sizing: border-box;
+    border-radius: 16px;
+    background-image: var(--fondo-panel-inicio);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #000000;
+    opacity: 0.72;
+    display: flex;
+    flex-direction: column;
+    justify-content: center !important;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+.titulo-final {
+    margin: 0;
+    font-family: "Optimus Princeps", "Cinzel", Georgia, serif;
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-shadow: 0 0 0.2em #ff8c00, 0 0 0.2em #000000, 3px -3px 6px rgba(255, 165, 0, 0.85);
+}
+
+.acciones-finales {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 24px;
+}
+
+/* Contenedor superior de HUD de vidas (izquierda y derecha) */
+.hud-vidas {
+    position: fixed;
+    top: 12px;
+    left: 0;
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+    z-index: 10000;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+}
+
+.columna-vida {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+    max-width: 36vw;
+}
+
+.parte-superior {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.etiqueta-vida {
+    font-family: "Optimus Princeps", "Cinzel", Georgia, serif;
+    font-size: clamp(18px, 2.8vw, 32px);
+    color: #ffffff;
+    line-height: 1.1;
+    text-shadow: 0 0 0.2em #ff8c00, 0 0 0.2em #000000, 3px -3px 6px rgba(255, 165, 0, 0.85);
+}
+
+.parte-inferior {
+    position: relative;
+    width: 100%;
+    height: 24px;
+}
+
+/* Base de cada barra de vida dividida en 3 segmentos uniformes */
+.barra-vida {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    border-radius: 14px;
+    border: 1.5px solid #000000;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+.barra-vida__relleno {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: width 0.2s ease;
+}
+
+/* Jugador: relleno anclado a la izquierda (disminuye de derecha a izquierda) */
+.barra-vida--jugador .barra-vida__relleno {
+    left: 0;
+    background-color: #ff0000;
+}
+
+/* Enemigo: relleno anclado a la derecha (disminuye de izquierda a derecha) */
+.barra-vida--enemigo .barra-vida__relleno {
+    right: 0;
+    background-color: #d438e6;
+}
+
+/* Líneas divisorias uniformes en 1/3 y 2/3 */
+.barra-vida__division {
+    position: absolute;
+    top: 0;
+    width: 1.5px;
+    height: 100%;
+    background-color: #000000;
+    z-index: 2;
+}
+
+.barra-vida__division--1 { left: 33.3333%; }
+.barra-vida__division--2 { left: 66.6667%; }
+
+/* Estados de llenado (3/3, 2/3, 1/3, 0/3) */
+.barra-vida--completa .barra-vida__relleno { width: 100%; }
+.barra-vida--dos-tercios .barra-vida__relleno { width: 66.6667%; }
+.barra-vida--un-tercio .barra-vida__relleno { width: 33.3333%; }
+.barra-vida--vacia .barra-vida__relleno { width: 0%; }

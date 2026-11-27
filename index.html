@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Trivia AR - Vidas Flotantes</title>
+    <title>Trivia AR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@1.0.0/dist/aframe-look-at-component.min.js"></script>
@@ -12,29 +12,122 @@
 
 <body style="margin: 0; overflow: hidden;">
 
-    <div id="trivia-hud">
+    <!-- HUD mínimo flotante solo para la pregunta actual -->
+    <div id="trivia-hud" style="display: none">
         <h3 id="pregunta-titulo">Cargando pregunta...</h3>
         <p id="pregunta-texto">Espere un momento...</p>
         <p id="tiempo-pregunta" style="display:none;">Tiempo: 10s</p>
         <p><small id="estado-texto">Escucha la pregunta...</small></p>
+        <p id="fila-nivel-mic" style="display:none;"><small id="nivel-mic">🎚️ Mic ░░░░░░░░░░</small></p>
         <button id="btn-reiniciar" style="display:none;" onclick="reiniciarJuego()">Reiniciar Juego</button>
     </div>
 
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <!-- Escena AR con Marcadores y Texto Flotante 3D
+         gltf-model con dracoDecoderPath: necesario SOLO si comprimiste los .glb con Draco (no estorba si no) -->
+    <a-scene embedded
+             arjs="sourceType: webcam; debugUIEnabled: false; maxDetectionRate: 30;"
+             renderer="antialias: false;"
+             gltf-model="dracoDecoderPath: https://www.gstatic.com/draco/versioned/decoders/1.5.6/">
 
+        <!-- 1. MARCADOR HIRO (Avatar del Usuario) -->
         <a-marker preset="hiro">
             <a-entity id="objeto-avatar" scale="0.07 0.07 0.07" position="0 0 0" rotation="0 90 0"></a-entity>
-            <a-text id="texto-vida-avatar" value="Caballero: 100%" position="0 1.2 0" align="center" color="#28a745" scale="1.5 1.5 1.5" look-at="[camera]"></a-text>
+            <!-- Texto de vida flotante sobre el Avatar -->
+            <a-text id="texto-vida-avatar" value="Avatar: 100%" position="0 1.2 0" align="center" color="#28a745" scale="1.5 1.5 1.5" look-at="[camera]"></a-text>
         </a-marker>
 
+        <!-- 2. MARCADOR KANJI (Enemigo) -->
         <a-marker preset="kanji">
             <a-entity id="objeto-enemigo-1" scale="0.07 0.07 0.07" position="0 0 0" rotation="0 -90 0"></a-entity>
-            <a-text id="texto-vida-e1" value="Enemigo: 100%" position="0 1.2 0" align="center" color="#dc3545" scale="1.5 1.5 1.5" look-at="[camera]"></a-text>
+            <a-text id="texto-vida-e1" value="Enemigo 1: 100%" position="0 1.2 0" align="center" color="#dc3545" scale="1.5 1.5 1.5" look-at="[camera]"></a-text>
         </a-marker>
 
         <a-entity camera></a-entity>
     </a-scene>
 
+    <!-- Pantalla inicial: TRIVIA SOULS -->
+    <div id="pantalla-inicio" class="panel-inicio" style="display: block;">
+        <h1 class="titulo-inicio">TRIVIA SOULS</h1>
+        <button id="btn-iniciar" class="btn-inicio">Iniciar</button>
+    </div>
+
+    <!-- Contenedor superior de HUD: "Tu vida" y "Enemigo" con zonas inferiores para barras -->
+    <div id="hud-vidas" class="hud-vidas">
+        <!-- Columna izquierda: Tu vida -->
+        <div class="columna-vida">
+            <div class="parte-superior">
+                <span class="etiqueta-vida" style="display: none">Tu vida</span>
+            </div>
+            <div id="contenedor-barra-jugador" class="parte-inferior">
+                <!-- Barra completa del jugador (oculta por defecto) -->
+                <div id="barra-jugador-completa" class="barra-vida barra-vida--jugador barra-vida--completa" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+
+                <!-- Variantes de vida del jugador (ocultas por defecto) -->
+                <div id="barra-jugador-2-3" class="barra-vida barra-vida--jugador barra-vida--dos-tercios" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+
+                <div id="barra-jugador-1-3" class="barra-vida barra-vida--jugador barra-vida--un-tercio" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+
+                <div id="barra-jugador-0-3" class="barra-vida barra-vida--jugador barra-vida--vacia" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Enemigo -->
+        <div class="columna-vida">
+            <div class="parte-superior">
+                <span class="etiqueta-vida" style="display: none">Enemigo</span>
+            </div>
+            <div id="contenedor-barra-enemigo" class="parte-inferior">
+                <!-- Barra completa del enemigo (oculta por defecto) -->
+                <div id="barra-enemigo-completa" class="barra-vida barra-vida--enemigo barra-vida--completa" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+
+                <!-- Variantes de vida del enemigo (ocultas por defecto) -->
+                <div id="barra-enemigo-2-3" class="barra-vida barra-vida--enemigo barra-vida--dos-tercios" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+
+                <div id="barra-enemigo-1-3" class="barra-vida barra-vida--enemigo barra-vida--un-tercio" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+
+                <div id="barra-enemigo-0-3" class="barra-vida barra-vida--enemigo barra-vida--vacia" style="display: none;">
+                    <div class="barra-vida__relleno"></div>
+                    <span class="barra-vida__division barra-vida__division--1"></span>
+                    <span class="barra-vida__division barra-vida__division--2"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventana final: ganaste / perdiste -->
+    <div id="pantalla-final" class="panel-final" style="display: none;">
+        <h2 id="mensaje-final" class="titulo-final">Texto</h2>
+    </div>
+
+    <!-- juego.js debe cargarse ANTES que script.js -->
     <script src="static/juego.js"></script>
     <script src="static/script.js"></script>
 </body>
